@@ -1,898 +1,411 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
-    <!-- Tailwind CSS CDN -->
+    <title>StockPulse - Inventory Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
     <style>
-        /* Custom scrollbar for log panels */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="font-sans antialiased h-full text-slate-800 flex flex-col md:flex-row min-h-screen bg-slate-50">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex">
 
-    <!-- Mobile Header -->
-    <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center z-20 shadow-md">
-        <div class="flex items-center space-x-3">
-            <div class="bg-indigo-600 p-2 rounded-lg text-white">
-                <i class="fa-solid fa-boxes-stacked text-xl"></i>
-            </div>
-            <span class="font-bold text-lg tracking-wide">StockPulse</span>
-        </div>
-        <button id="mobileMenuBtn" class="text-slate-300 hover:text-white focus:outline-none p-1">
-            <i class="fa-solid fa-bars text-2xl"></i>
-        </button>
-    </header>
-
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out md:static w-64 bg-slate-900 text-slate-300 flex flex-col justify-between z-30 shadow-xl">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between hidden md:flex">
         <div>
-            <!-- Sidebar Header -->
-            <div class="hidden md:flex items-center space-x-3 p-6 border-b border-slate-800">
-                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-600/30">
-                    <i class="fa-solid fa-boxes-stacked text-xl"></i>
+            <div class="p-6 flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                    <i class="fa-solid me-0 fa-boxes-stacked text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg text-white tracking-wide leading-tight">StockPulse</h1>
-                    <p class="text-xs text-slate-400">Inventory Hub</p>
+                    <h1 class="font-bold text-lg leading-none">StockPulse</h1>
+                    <span class="text-xs text-slate-500">Inventory Hub</span>
                 </div>
             </div>
-
-            <!-- Navigation Links -->
-            <nav class="p-4 space-y-1.5 mt-2">
-                <a href="#dashboard" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 bg-indigo-600 text-white shadow-md shadow-indigo-600/20">
-                    <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
+            
+            <nav class="px-4 space-y-1">
+                <a href="#dashboard" onclick="showTab('dashboard')" id="nav-dashboard" class="flex items-center space-x-3 px-4 py-3 rounded-lg bg-indigo-600/10 text-indigo-400 font-medium">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#inventory" onclick="switchTab('inventory')" id="nav-inventory" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-                    <i class="fa-solid fa-list-check w-5 text-center text-base"></i>
+                <a href="#inventory" onclick="showTab('inventory')" id="nav-inventory" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition">
+                    <i class="fa-solid fa-boxes-packing w-5"></i>
                     <span>Inventory List</span>
                 </a>
-                <a href="#actions" onclick="switchTab('actions')" id="nav-actions" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60">
-                    <i class="fa-solid fa-right-left w-5 text-center text-base"></i>
+                <a href="#stock-actions" onclick="showTab('stock-actions')" id="nav-stock-actions" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition">
+                    <i class="fa-solid fa-right-left w-5"></i>
                     <span>Stock In / Out</span>
                 </a>
-                <a href="#alerts" onclick="switchTab('alerts')" id="nav-alerts" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 justify-between">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid fa-bell w-5 text-center text-base"></i>
-                        <span>Alerts Log</span>
-                    </div>
-                    <span id="unreadAlertBadge" class="bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold hidden">0</span>
+                <a href="#alerts" onclick="showTab('alerts')" id="nav-alerts" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition">
+                    <i class="fa-solid fa-bell w-5"></i>
+                    <span>Alerts Log</span>
                 </a>
             </nav>
         </div>
 
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500">
+        <div class="p-4 border-t border-slate-800">
             <div class="flex items-center space-x-3 px-2 py-2">
-                <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 font-bold">
-                    AD
-                </div>
+                <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs">AD</div>
                 <div>
-                    <p class="font-medium text-slate-300">Admin User</p>
-                    <p class="text-slate-500">Store Manager</p>
+                    <p class="text-sm font-medium">Admin User</p>
+                    <p class="text-xs text-slate-500">Store Manager</p>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- Overlay for mobile sidebar -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-20 hidden md:hidden"></div>
-
     <!-- Main Content Area -->
-    <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
-
-        <!-- Banner Toast Notifications Container -->
-        <div id="toastContainer" class="fixed top-5 right-5 z-50 space-y-3 max-w-md w-full pointer-events-none"></div>
-
-        <!-- Section 1: Dashboard Overview Tab -->
-        <div id="tab-dashboard" class="tab-content space-y-6">
-            <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Dashboard Overview</h2>
-                    <p class="text-sm text-slate-500">Real-time status and quick metrics of your warehouse stock.</p>
-                </div>
-                <button onclick="openAddItemModal()" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition duration-150">
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <!-- Top Navbar -->
+        <header class="h-16 border-b border-slate-800 bg-slate-950/50 backdrop-blur px-6 flex items-center justify-between sticky top-0 z-10">
+            <h2 id="page-title" class="text-xl font-bold">Dashboard</h2>
+            <div class="flex items-center space-x-4">
+                <button onclick="addNewItemModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center space-x-2">
                     <i class="fa-solid fa-plus"></i>
                     <span>Add New Item</span>
                 </button>
             </div>
+        </header>
 
-            <!-- Metric Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Total Items -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Items</p>
-                        <h3 id="statTotalItems" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                        <p class="text-xs text-slate-400 mt-1">Distinct catalog SKUs</p>
+        <!-- Main Dynamic Views -->
+        <div class="p-6 space-y-6">
+
+            <!-- DASHBOARD TAB -->
+            <div id="tab-dashboard" class="tab-content space-y-6">
+                <!-- Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-800/50 border border-slate-800 p-5 rounded-xl">
+                        <p class="text-slate-400 text-sm font-medium">Total Items</p>
+                        <h3 id="stat-total-items" class="text-2xl font-bold mt-1">0</h3>
                     </div>
-                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-box font-bold"></i>
+                    <div class="bg-slate-800/50 border border-slate-800 p-5 rounded-xl">
+                        <p class="text-slate-400 text-sm font-medium">Total Quantity</p>
+                        <h3 id="stat-total-qty" class="text-2xl font-bold mt-1">0</h3>
+                    </div>
+                    <div class="bg-amber-500/10 border border-amber-500/20 p-5 rounded-xl">
+                        <p class="text-amber-400 text-sm font-medium">Low Stock Warning</p>
+                        <h3 id="stat-low-stock" class="text-2xl font-bold text-amber-400 mt-1">0</h3>
+                    </div>
+                    <div class="bg-rose-500/10 border border-rose-500/20 p-5 rounded-xl">
+                        <p class="text-rose-400 text-sm font-medium">Out of Stock</p>
+                        <h3 id="stat-out-of-stock" class="text-2xl font-bold text-rose-400 mt-1">0</h3>
                     </div>
                 </div>
 
-                <!-- Total Stock Quantity -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Units</p>
-                        <h3 id="statTotalUnits" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                        <p class="text-xs text-slate-400 mt-1">Units in warehouse</p>
-                    </div>
-                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-cubes"></i>
-                    </div>
-                </div>
-
-                <!-- Low Stock Alert -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Low Stock Warning</p>
-                        <h3 id="statLowStock" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
-                        <p class="text-xs text-amber-600/70 mt-1">Items near threshold</p>
-                    </div>
-                    <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                </div>
-
-                <!-- Out of Stock Alert -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Out of Stock</p>
-                        <h3 id="statOutOfStock" class="text-3xl font-extrabold text-rose-600 mt-1">0</h3>
-                        <p class="text-xs text-rose-600/70 mt-1">Immediate reorder needed</p>
-                    </div>
-                    <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-circle-xmark"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity & Quick Controls Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Recent Stock Items Quick View -->
-                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-slate-900 text-lg">Inventory Summary</h3>
-                        <button onclick="switchTab('inventory')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">View All &rarr;</button>
-                    </div>
+                <!-- Recent Activity & Overview -->
+                <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-5">
+                    <h3 class="font-bold text-lg mb-4">Stock Overview Summary</h3>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
                                 <tr>
-                                    <th class="p-3 rounded-l-lg">Item Name</th>
+                                    <th class="p-3">Item Name</th>
                                     <th class="p-3">Category</th>
-                                    <th class="p-3">Current Stock</th>
-                                    <th class="p-3">Min Threshold</th>
-                                    <th class="p-3 rounded-r-lg">Status</th>
+                                    <th class="p-3">Stock Level</th>
+                                    <th class="p-3">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="dashboardTableBody" class="divide-y divide-slate-100">
-                                <!-- Populated dynamically -->
+                            <tbody id="dashboard-summary-table">
+                                <!-- Populated by JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
 
-                <!-- Dynamic Recent Activity Feed -->
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-bold text-slate-900 text-lg">System Feed</h3>
-                        <span class="text-xs text-slate-400">Live events</span>
+            <!-- INVENTORY TAB -->
+            <div id="tab-inventory" class="tab-content hidden space-y-4">
+                <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg">Current Inventory List</h3>
+                        <input type="text" id="search-inventory" onkeyup="filterInventory()" placeholder="Search item..." class="bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-sm focus:outline-none focus:border-indigo-500">
                     </div>
-                    <div id="recentActivityFeed" class="space-y-3 max-h-80 overflow-y-auto pr-1">
-                        <!-- Dynamic items -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+                                <tr>
+                                    <th class="p-3">Item Name</th>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">Quantity</th>
+                                    <th class="p-3">Min Threshold</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Quick Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Section 2: Full Inventory List Tab -->
-        <div id="tab-inventory" class="tab-content space-y-6 hidden">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Inventory Catalog</h2>
-                    <p class="text-sm text-slate-500">Manage all registered products, stock levels, and reorder limits.</p>
-                </div>
-                <button onclick="openAddItemModal()" class="inline-flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition duration-150">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Add New Item</span>
-                </button>
-            </div>
-
-            <!-- Filter Controls -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
-                <div class="relative w-full md:w-80">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" onkeyup="filterInventoryTable()" placeholder="Search item name or SKU..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-                </div>
-                <div class="flex items-center space-x-3 w-full md:w-auto">
-                    <select id="statusFilter" onchange="filterInventoryTable()" class="w-full md:w-auto py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-                        <option value="ALL">All Statuses</option>
-                        <option value="IN_STOCK font-medium">In Stock</option>
-                        <option value="LOW_STOCK">Low Stock</option>
-                        <option value="OUT_OF_STOCK">Out of Stock</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Full Inventory Table -->
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold border-b border-slate-100">
-                            <tr>
-                                <th class="p-4">SKU / ID</th>
-                                <th class="p-4">Item Details</th>
-                                <th class="p-4">Category</th>
-                                <th class="p-4">Stock Level</th>
-                                <th class="p-4">Threshold</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 text-center">Quick Adjust</th>
-                                <th class="p-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fullInventoryTableBody" class="divide-y divide-slate-100">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 3: Stock In / Stock Out Control Panel -->
-        <div id="tab-actions" class="tab-content space-y-6 hidden">
-            <div>
-                <h2 class="text-2xl font-bold text-slate-900">Stock Adjustment Panel</h2>
-                <p class="text-sm text-slate-500">Receive new shipments (Stock In) or issue items out (Stock Out).</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Stock In Card -->
-                <div class="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm space-y-4">
-                    <div class="flex items-center space-x-3 text-emerald-600 pb-2 border-b border-slate-100">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-lg">
-                            <i class="fa-solid fa-arrow-down-left-and-arrow-up-right-to-center transform rotate-45"></i>
-                        </div>
+            <!-- STOCK ACTIONS TAB -->
+            <div id="tab-stock-actions" class="tab-content hidden space-y-6">
+                <div class="max-w-xl mx-auto bg-slate-800/50 border border-slate-800 rounded-xl p-6">
+                    <h3 class="font-bold text-lg mb-4">Stock In / Stock Out Adjustment</h3>
+                    <form id="stock-action-form" onsubmit="handleStockAction(event)" class="space-y-4">
                         <div>
-                            <h3 class="font-bold text-slate-900 text-lg">Stock In (Increase)</h3>
-                            <p class="text-xs text-slate-400">Add received goods to existing stock</p>
-                        </div>
-                    </div>
-
-                    <form id="stockInForm" onsubmit="handleStockAdjustment(event, 'IN')" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Select Item</label>
-                            <select id="stockInSelect" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
-                                <!-- Dynamic options -->
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Select Item</label>
+                            <select id="action-item-select" required class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-indigo-500">
+                                <!-- Populated by JS -->
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Quantity to Add</label>
-                            <input type="number" id="stockInQty" min="1" required placeholder="e.g. 20" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Action Type</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="flex items-center justify-center p-3 border border-slate-700 rounded-lg cursor-pointer hover:bg-slate-800">
+                                    <input type="radio" name="action_type" value="IN" checked class="text-indigo-600 mr-2">
+                                    <span class="font-medium text-emerald-400"><i class="fa-solid fa-plus-circle mr-1"></i> Stock In</span>
+                                </label>
+                                <label class="flex items-center justify-center p-3 border border-slate-700 rounded-lg cursor-pointer hover:bg-slate-800">
+                                    <input type="radio" name="action_type" value="OUT" class="text-indigo-600 mr-2">
+                                    <span class="font-medium text-rose-400"><i class="fa-solid fa-minus-circle mr-1"></i> Stock Out</span>
+                                </label>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Note / Reference (Optional)</label>
-                            <input type="text" id="stockInNote" placeholder="e.g. PO-89231 from Supplier" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500">
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Quantity</label>
+                            <input type="number" id="action-qty" min="1" required placeholder="Enter quantity" class="w-full bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-indigo-500">
                         </div>
-                        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow-md shadow-emerald-600/20 transition duration-150 flex justify-center items-center space-x-2">
-                            <i class="fa-solid fa-plus-circle"></i>
-                            <span>Confirm Stock Increase</span>
-                        </button>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-lg transition">Submit Transaction</button>
                     </form>
                 </div>
+            </div>
 
-                <!-- Stock Out Card -->
-                <div class="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm space-y-4">
-                    <div class="flex items-center space-x-3 text-rose-600 pb-2 border-b border-slate-100">
-                        <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-lg">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-900 text-lg">Stock Out (Decrease)</h3>
-                            <p class="text-xs text-slate-400">Issue out sold or dispatched items</p>
-                        </div>
+            <!-- ALERTS LOG TAB -->
+            <div id="tab-alerts" class="tab-content hidden space-y-4">
+                <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-5">
+                    <h3 class="font-bold text-lg mb-4">Notifications & Alerts History</h3>
+                    <div id="alerts-container" class="space-y-3">
+                        <!-- Populated by JS -->
                     </div>
-
-                    <form id="stockOutForm" onsubmit="handleStockAdjustment(event, 'OUT')" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Select Item</label>
-                            <select id="stockOutSelect" required class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500">
-                                <!-- Dynamic options -->
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Quantity to Remove</label>
-                            <input type="number" id="stockOutQty" min="1" required placeholder="e.g. 5" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Reason / Order ID (Optional)</label>
-                            <input type="text" id="stockOutNote" placeholder="e.g. Customer Sales Order #1042" class="w-full py-2.5 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500">
-                        </div>
-                        <button type="submit" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-sm shadow-md shadow-rose-600/20 transition duration-150 flex justify-center items-center space-x-2">
-                            <i class="fa-solid fa-minus-circle"></i>
-                            <span>Confirm Stock Reduction</span>
-                        </button>
-                    </form>
                 </div>
             </div>
+
         </div>
-
-        <!-- Section 4: Alerts & Notifications Log Tab -->
-        <div id="tab-alerts" class="tab-content space-y-6 hidden">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Notifications & Alerts Center</h2>
-                    <p class="text-sm text-slate-500">History of stock changes, low stock warnings, and out-of-stock events.</p>
-                </div>
-                <button onclick="clearAlertLogs()" class="inline-flex items-center space-x-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl transition duration-150">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span>Clear Alert Logs</span>
-                </button>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5">
-                <div id="alertsLogContainer" class="space-y-4">
-                    <!-- Dynamic logs -->
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Modal: Add New Item -->
-    <div id="addItemModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 transform transition-all">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <h3 class="font-bold text-lg text-slate-900">Add New Inventory Item</h3>
-                <button onclick="closeAddItemModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <form id="addItemForm" onsubmit="handleAddNewItem(event)" class="space-y-4">
+    <!-- Modal for Adding Item -->
+    <div id="add-item-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-xl p-6 space-y-4">
+            <h3 class="font-bold text-lg">Add New Product</h3>
+            <form id="add-item-form" onsubmit="handleAddItem(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">SKU / Item Code</label>
-                    <input type="text" id="newItemSku" required placeholder="e.g. PRD-1005" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Item Name</label>
+                    <input type="text" id="new-item-name" required class="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-lg text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Item Name</label>
-                    <input type="text" id="newItemName" required placeholder="e.g. Ergonomic Office Chair" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Category</label>
+                    <input type="text" id="new-item-cat" required class="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-lg text-sm">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Category</label>
-                    <input type="text" id="newItemCategory" required placeholder="e.g. Furniture" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Initial Quantity</label>
-                        <input type="number" id="newItemQty" min="0" required placeholder="0" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Initial Stock</label>
+                        <input type="number" id="new-item-qty" min="0" required class="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-lg text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Min Threshold</label>
-                        <input type="number" id="newItemThreshold" min="1" required placeholder="10" class="w-full py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Low Threshold</label>
+                        <input type="number" id="new-item-min" min="1" value="5" required class="w-full bg-slate-950 border border-slate-800 px-3 py-2 rounded-lg text-sm">
                     </div>
                 </div>
-
-                <div class="pt-3 flex justify-end space-x-3">
-                    <button type="button" onclick="closeAddItemModal()" class="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 text-sm font-semibold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/20">Save Item</button>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm bg-slate-800 hover:bg-slate-700 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium">Save Item</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- Script Logic -->
     <script>
-        // Initial Mock Data
+        // CONFIGURATION: Discord Webhook Link
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1567068607991779338/tieO0T0hrmmJeiEGLCEqqyuFvGqNmgYW0TbxJ7ZvkZi2soBQC56PnscZ2pfm";
+
+        // Initial Sample Data
         let inventory = [
-            { id: 1, sku: 'SKU-8821', name: 'Wireless Bluetooth Mouse', category: 'Electronics', stock: 45, threshold: 10 },
-            { id: 2, sku: 'SKU-3102', name: 'Mechanical Gaming Keyboard', category: 'Electronics', stock: 8, threshold: 10 },
-            { id: 3, sku: 'SKU-9940', name: 'USB-C Fast Charger 65W', category: 'Accessories', stock: 0, threshold: 5 },
-            { id: 4, sku: 'SKU-1204', name: '27-inch IPS Monitor', category: 'Electronics', stock: 25, threshold: 8 },
-            { id: 5, sku: 'SKU-7731', name: 'Ergonomic Desk Mat', category: 'Office Supplies', stock: 4, threshold: 5 }
+            { id: 1, name: "Wireless Ergonomic Mouse", category: "Electronics", quantity: 15, minThreshold: 5 },
+            { id: 2, name: "Mechanical Gaming Keyboard", category: "Electronics", quantity: 3, minThreshold: 5 },
+            { id: 3, name: "27-inch 4K Monitor", category: "Displays", quantity: 0, minThreshold: 2 }
         ];
 
         let alertLogs = [];
-        let unreadCount = 0;
 
-        // On Page Load Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            // Seed initial alerts for initial state demo
-            createAlert('SYSTEM', 'System Initialized', 'Inventory monitoring active.', 'INFO');
-            checkThresholds();
-            renderAll();
-
-            // Mobile Menu Toggle
-            const mobileBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-
-            mobileBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            });
-
-            overlay.addEventListener('click', () => {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            });
-        });
-
-        // Navigation Tabs Controller
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
-                nav.classList.add('text-slate-400', 'hover:text-slate-200');
-            });
-
-            const activeTab = document.getElementById(`tab-${tabId}`);
-            if (activeTab) activeTab.classList.remove('hidden');
-
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if (activeNav) {
-                activeNav.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
-                activeNav.classList.remove('text-slate-400', 'hover:text-slate-200');
-            }
-
-            if (tabId === 'alerts') {
-                unreadCount = 0;
-                updateUnreadBadge();
-            }
-
-            // Close mobile menu on switch
-            document.getElementById('sidebar').classList.add('-translate-x-full');
-            document.getElementById('sidebarOverlay').classList.add('hidden');
-        }
-
-        // Render Dashboard Metrics & Tables
-        function renderAll() {
-            renderMetrics();
-            renderDashboardTable();
-            renderFullInventoryTable();
-            populateSelectOptions();
-            renderAlertLogs();
-            renderRecentActivity();
-        }
-
-        function renderMetrics() {
-            const totalItems = inventory.length;
-            const totalUnits = inventory.reduce((sum, item) => sum + item.stock, 0);
-            const lowStockCount = inventory.filter(item => item.stock > 0 && item.stock <= item.threshold).length;
-            const outOfStockCount = inventory.filter(item => item.stock === 0).length;
-
-            document.getElementById('statTotalItems').innerText = totalItems;
-            document.getElementById('statTotalUnits').innerText = totalUnits;
-            document.getElementById('statLowStock').innerText = lowStockCount;
-            document.getElementById('statOutOfStock').innerText = outOfStockCount;
-        }
-
-        function getStatusBadge(item) {
-            if (item.stock === 0) {
-                return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700">
-                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600 mr-1.5"></span>Out of Stock
-                </span>`;
-            } else if (item.stock <= item.threshold) {
-                return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
-                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600 mr-1.5"></span>Low Stock
-                </span>`;
-            } else {
-                return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1.5"></span>In Stock
-                </span>`;
-            }
-        }
-
-        function renderDashboardTable() {
-            const tbody = document.getElementById('dashboardTableBody');
-            tbody.innerHTML = '';
-
-            inventory.slice(0, 5).forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50/50 transition';
-                tr.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-800">${escapeHtml(item.name)}</td>
-                    <td class="p-3 text-slate-500 text-xs">${escapeHtml(item.category)}</td>
-                    <td class="p-3 font-bold text-slate-900">${item.stock} units</td>
-                    <td class="p-3 text-slate-500">${item.threshold}</td>
-                    <td class="p-3">${getStatusBadge(item)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderFullInventoryTable() {
-            const tbody = document.getElementById('fullInventoryTableBody');
-            tbody.innerHTML = '';
-
-            inventory.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50/50 transition';
-                tr.innerHTML = `
-                    <td class="p-4 font-mono text-xs text-slate-500">${escapeHtml(item.sku)}</td>
-                    <td class="p-4">
-                        <div class="font-semibold text-slate-900">${escapeHtml(item.name)}</div>
-                    </td>
-                    <td class="p-4 text-xs text-slate-500">${escapeHtml(item.category)}</td>
-                    <td class="p-4 font-bold text-slate-900 text-base">${item.stock}</td>
-                    <td class="p-4 text-slate-500 text-xs">${item.threshold} units</td>
-                    <td class="p-4">${getStatusBadge(item)}</td>
-                    <td class="p-4 text-center">
-                        <div class="inline-flex rounded-lg shadow-sm border border-slate-200 bg-slate-50 p-0.5">
-                            <button onclick="quickAdjust(${item.id}, -1)" class="px-2 py-1 text-xs font-bold text-slate-600 hover:bg-white hover:text-rose-600 rounded transition">-1</button>
-                            <span class="border-r border-slate-200"></span>
-                            <button onclick="quickAdjust(${item.id}, 1)" class="px-2 py-1 text-xs font-bold text-slate-600 hover:bg-white hover:text-emerald-600 rounded transition">+1</button>
-                        </div>
-                    </td>
-                    <td class="p-4 text-right">
-                        <button onclick="deleteItem(${item.id})" class="text-slate-400 hover:text-rose-600 p-1.5 transition">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function populateSelectOptions() {
-            const inSelect = document.getElementById('stockInSelect');
-            const outSelect = document.getElementById('stockOutSelect');
-
-            const optionsHtml = inventory.map(item => `<option value="${item.id}">${item.name} (${item.sku}) - Current: ${item.stock}</option>`).join('');
+        // Function to dispatch alerts to Discord
+        function sendDiscordNotification(message) {
+            if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("YOUR_WEBHOOK")) return;
             
-            inSelect.innerHTML = optionsHtml;
-            outSelect.innerHTML = optionsHtml;
+            fetch(DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ content: message })
+            }).catch(err => console.error("Discord Error:", err));
         }
 
-        // Quick adjust stock directly from full inventory table
-        function quickAdjust(itemId, change) {
-            const item = inventory.find(i => i.id === itemId);
-            if (!item) return;
-
-            const prevStock = item.stock;
-            const newStock = prevStock + change;
-
-            if (newStock < 0) {
-                showToast('Error', `Stock for ${item.name} cannot be less than 0.`, 'ERROR');
-                return;
-            }
-
-            item.stock = newStock;
+        function createAlert(title, detail, type) {
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            alertLogs.unshift({ title, detail, type, time });
+            renderAlerts();
             
-            if (change > 0) {
-                createAlert('Stock Restocked', `Item <b>${item.name}</b> stock increased by +${change}. Current Total: <b>${item.stock}</b>`, 'INCREASE');
-                showToast('Stock Restocked', `+${change} unit added to ${item.name}`, 'SUCCESS');
-            } else {
-                createAlert('Stock Reduced', `Item <b>${item.name}</b> stock reduced by ${change}. Current Total: <b>${item.stock}</b>`, 'DECREASE');
-                showToast('Stock Reduced', `1 unit removed from ${item.name}`, 'INFO');
-            }
-
-            evaluateItemAlerts(item, prevStock);
-            renderAll();
+            // Format alert text for Discord
+            let discordMsg = `**[${title}]**\n${detail}`;
+            sendDiscordNotification(discordMsg);
         }
 
-        // Handle Stock In/Out Form Submission
-        function handleStockAdjustment(event, type) {
-            event.preventDefault();
-            
-            const isStockIn = type === 'IN';
-            const selectId = isStockIn ? 'stockInSelect' : 'stockOutSelect';
-            const qtyId = isStockIn ? 'stockInQty' : 'stockOutQty';
-            const noteId = isStockIn ? 'stockInNote' : 'stockOutNote';
-
-            const itemId = parseInt(document.getElementById(selectId).value);
-            const qty = parseInt(document.getElementById(qtyId).value);
-            const note = document.getElementById(noteId).value;
-
-            const item = inventory.find(i => i.id === itemId);
-            if (!item) return;
-
-            const prevStock = item.stock;
-
-            if (!isStockIn && item.stock < qty) {
-                showToast('Insufficient Stock', `Cannot remove ${qty} units. Only ${item.stock} available.`, 'ERROR');
-                return;
-            }
-
-            if (isStockIn) {
-                item.stock += qty;
-                const noteText = note ? ` (Ref: ${note})` : '';
-                createAlert('Stock Restocked', `Item <b>${item.name}</b> updated. Previous: ${prevStock} | Added: <b>+${qty}</b> | Current Total: <b>${item.stock}</b>${noteText}`, 'INCREASE');
-                showToast('Stock Restocked 🟢', `Added +${qty} units of ${item.name}`, 'SUCCESS');
-            } else {
-                item.stock -= qty;
-                const noteText = note ? ` (Ref: ${note})` : '';
-                createAlert('Stock Reduced', `Item <b>${item.name}</b> updated. Previous: ${prevStock} | Issued: <b>-${qty}</b> | Current Total: <b>${item.stock}</b>${noteText}`, 'DECREASE');
-                showToast('Stock Reduced 🟡', `Removed ${qty} units of ${item.name}`, 'WARNING');
-            }
-
-            evaluateItemAlerts(item, prevStock);
-
-            // Reset inputs
-            document.getElementById(qtyId).value = '';
-            document.getElementById(noteId).value = '';
-
-            renderAll();
-        }
-
-        // Evaluate Low Stock / Out of Stock Threshold Warnings
-        function evaluateItemAlerts(item, prevStock) {
-            if (item.stock === 0 && prevStock > 0) {
-                createAlert('Out of Stock Alert', `Item <b>${item.name}</b> is currently <b>OUT OF STOCK</b>! Remaining: 0 units. Immediate reorder required.`, 'OUT_OF_STOCK');
-                showToast('🔴 Out of Stock Alert', `${item.name} is now completely out of stock!`, 'ERROR');
-            } else if (item.stock > 0 && item.stock <= item.threshold && prevStock > item.threshold) {
-                createAlert('Low Stock Alert', `Item <b>${item.name}</b> is running low! Remaining: <b>${item.stock} units</b> (Below threshold of ${item.threshold}).`, 'LOW_STOCK');
-                showToast('🟠 Low Stock Warning', `${item.name} stock is below limit (${item.stock}/${item.threshold})`, 'WARNING');
-            }
-        }
-
-        function checkThresholds() {
-            inventory.forEach(item => {
-                if (item.stock === 0) {
-                    createAlert('Out of Stock Alert', `Item <b>${item.name}</b> is currently <b>OUT OF STOCK</b>! Remaining: 0 units.`, 'OUT_OF_STOCK');
-                } else if (item.stock <= item.threshold) {
-                    createAlert('Low Stock Alert', `Item <b>${item.name}</b> is running low! Remaining: <b>${item.stock} units</b>.`, 'LOW_STOCK');
-                }
-            });
-        }
-
-        // Create Alert Log Entry
-        function createAlert(title, message, type) {
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const log = { id: Date.now(), title, message, type, time };
-            alertLogs.unshift(log);
-            unreadCount++;
-            updateUnreadBadge();
-        }
-
-        function updateUnreadBadge() {
-            const badge = document.getElementById('unreadAlertBadge');
-            if (unreadCount > 0) {
-                badge.innerText = unreadCount;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        // Render Alerts Log Tab
-        function renderAlertLogs() {
-            const container = document.getElementById('alertsLogContainer');
-            if (alertLogs.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-400">No alert notifications recorded yet.</div>`;
-                return;
-            }
-
+        function renderAlerts() {
+            const container = document.getElementById('alerts-container');
             container.innerHTML = alertLogs.map(log => {
-                let iconClass = 'fa-info-circle text-blue-500 bg-blue-50';
-                let borderClass = 'border-slate-200';
-
-                if (log.type === 'INCREASE') {
-                    iconClass = 'fa-circle-plus text-emerald-600 bg-emerald-50';
-                    borderClass = 'border-emerald-200 bg-emerald-50/20';
-                } else if (log.type === 'DECREASE') {
-                    iconClass = 'fa-circle-minus text-amber-600 bg-amber-50';
-                    borderClass = 'border-amber-200 bg-amber-50/20';
-                } else if (log.type === 'LOW_STOCK') {
-                    iconClass = 'fa-triangle-exclamation text-amber-600 bg-amber-100';
-                    borderClass = 'border-amber-300 bg-amber-50/40';
-                } else if (log.type === 'OUT_OF_STOCK') {
-                    iconClass = 'fa-circle-xmark text-rose-600 bg-rose-100';
-                    borderClass = 'border-rose-300 bg-rose-50/40';
-                }
-
+                let border = log.type === 'danger' ? 'border-rose-500/30 bg-rose-500/10 text-rose-400' :
+                             log.type === 'warning' ? 'border-amber-500/30 bg-amber-500/10 text-amber-400' :
+                             'border-emerald-500/30 bg-emerald-500/10 text-emerald-400';
                 return `
-                    <div class="p-4 rounded-xl border ${borderClass} flex items-start space-x-3 transition">
-                        <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconClass}">
-                            <i class="fa-solid ${iconClass.split(' ')[0]}"></i>
+                    <div class="p-4 border rounded-lg flex justify-between items-start ${border}">
+                        <div>
+                            <p class="font-bold text-sm">${log.title}</p>
+                            <p class="text-xs mt-1 text-slate-300">${log.detail}</p>
                         </div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <h4 class="font-bold text-slate-900 text-sm">${log.title}</h4>
-                                <span class="text-xs text-slate-400 font-mono">${log.time}</span>
-                            </div>
-                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">${log.message}</p>
-                        </div>
+                        <span class="text-xs text-slate-500">${log.time}</span>
                     </div>
                 `;
             }).join('');
         }
 
-        // Render Dashboard Activity Feed (Top 4 events)
-        function renderRecentActivity() {
-            const feed = document.getElementById('recentActivityFeed');
-            const recent = alertLogs.slice(0, 5);
+        function updateMetrics() {
+            document.getElementById('stat-total-items').innerText = inventory.length;
+            document.getElementById('stat-total-qty').innerText = inventory.reduce((a, b) => a + b.quantity, 0);
+            
+            const lowStock = inventory.filter(i => i.quantity > 0 && i.quantity <= i.minThreshold).length;
+            const outOfStock = inventory.filter(i => i.quantity === 0).length;
 
-            if (recent.length === 0) {
-                feed.innerHTML = `<div class="text-xs text-slate-400 py-4 text-center">No recent activity.</div>`;
-                return;
-            }
-
-            feed.innerHTML = recent.map(log => `
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs flex justify-between items-center">
-                    <div>
-                        <span class="font-bold text-slate-800">${log.title}</span>
-                        <p class="text-slate-500 text-[11px] truncate max-w-[200px] mt-0.5">${log.message.replace(/<\/?[^>]+(>|$)/g, "")}</p>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-mono shrink-0">${log.time}</span>
-                </div>
-            `).join('');
+            document.getElementById('stat-low-stock').innerText = lowStock;
+            document.getElementById('stat-out-of-stock').innerText = outOfStock;
         }
 
-        function clearAlertLogs() {
-            alertLogs = [];
-            unreadCount = 0;
-            updateUnreadBadge();
-            renderAlertLogs();
-            renderRecentActivity();
-            showToast('Logs Cleared', 'Alert notifications history cleared.', 'INFO');
-        }
-
-        // Toast Notification Trigger
-        function showToast(title, message, type = 'INFO') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'pointer-events-auto flex items-center space-x-3 p-4 rounded-xl shadow-lg border text-sm transition-all duration-300 transform translate-y-2 opacity-0';
-
-            let bgClass = 'bg-white border-slate-200 text-slate-800';
-            let icon = '<i class="fa-solid fa-circle-info text-indigo-500 text-lg"></i>';
-
-            if (type === 'SUCCESS') {
-                bgClass = 'bg-slate-900 text-white border-slate-800';
-                icon = '<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>';
-            } else if (type === 'WARNING') {
-                bgClass = 'bg-amber-500 text-white border-amber-600';
-                icon = '<i class="fa-solid fa-triangle-exclamation text-white text-lg"></i>';
-            } else if (type === 'ERROR') {
-                bgClass = 'bg-rose-600 text-white border-rose-700';
-                icon = '<i class="fa-solid fa-circle-exmark text-white text-lg"></i>';
-            }
-
-            toast.className += ` ${bgClass}`;
-            toast.innerHTML = `
-                ${icon}
-                <div class="flex-1">
-                    <p class="font-bold text-xs uppercase tracking-wide opacity-90">${title}</p>
-                    <p class="text-xs mt-0.5">${message}</p>
-                </div>
-            `;
-
-            container.appendChild(toast);
-
-            // Animate in
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
-            // Auto dismiss
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        // Add New Item Modal Controls
-        function openAddItemModal() {
-            document.getElementById('addItemModal').classList.remove('hidden');
-        }
-
-        function closeAddItemModal() {
-            document.getElementById('addItemModal').classList.add('hidden');
-            document.getElementById('addItemForm').reset();
-        }
-
-        function handleAddNewItem(e) {
-            e.preventDefault();
-            const sku = document.getElementById('newItemSku').value.trim();
-            const name = document.getElementById('newItemName').value.trim();
-            const category = document.getElementById('newItemCategory').value.trim();
-            const qty = parseInt(document.getElementById('newItemQty').value);
-            const threshold = parseInt(document.getElementById('newItemThreshold').value);
-
-            const newItem = {
-                id: Date.now(),
-                sku,
-                name,
-                category,
-                stock: qty,
-                threshold
+        function renderTables() {
+            const getBadge = (q, min) => {
+                if (q === 0) return `<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-xs">Out of Stock</span>`;
+                if (q <= min) return `<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-xs">Low Stock</span>`;
+                return `<span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-xs">In Stock</span>`;
             };
 
-            inventory.push(newItem);
-            createAlert('New Item Added', `Registered <b>${name}</b> (${sku}) with initial stock of <b>${qty} units</b>.`, 'INCREASE');
-            showToast('Item Added', `${name} added to catalog.`, 'SUCCESS');
+            // Summary Table
+            document.getElementById('dashboard-summary-table').innerHTML = inventory.map(i => `
+                <tr class="border-b border-slate-800">
+                    <td class="p-3 font-medium">${i.name}</td>
+                    <td class="p-3 text-slate-400">${i.category}</td>
+                    <td class="p-3">${i.quantity} units</td>
+                    <td class="p-3">${getBadge(i.quantity, i.minThreshold)}</td>
+                </tr>
+            `).join('');
 
-            closeAddItemModal();
-            renderAll();
+            // Detailed Inventory Table
+            document.getElementById('inventory-table-body').innerHTML = inventory.map(i => `
+                <tr class="border-b border-slate-800">
+                    <td class="p-3 font-medium">${i.name}</td>
+                    <td class="p-3 text-slate-400">${i.category}</td>
+                    <td class="p-3 font-bold">${i.quantity}</td>
+                    <td class="p-3 text-slate-400">${i.minThreshold}</td>
+                    <td class="p-3">${getBadge(i.quantity, i.minThreshold)}</td>
+                    <td class="p-3 space-x-1">
+                        <button onclick="quickAdjust(${i.id}, 1)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs text-emerald-400">+1</button>
+                        <button onclick="quickAdjust(${i.id}, -1)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs text-rose-400">-1</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Select Dropdown
+            document.getElementById('action-item-select').innerHTML = inventory.map(i => `<option value="${i.id}">${i.name} (Current: ${i.quantity})</option>`).join('');
         }
 
-        function deleteItem(itemId) {
-            const item = inventory.find(i => i.id === itemId);
+        function quickAdjust(id, amount) {
+            const item = inventory.find(i => i.id === id);
             if (!item) return;
 
-            inventory = inventory.filter(i => i.id !== itemId);
-            createAlert('Item Removed', `Product <b>${item.name}</b> removed from catalog.`, 'INFO');
-            showToast('Item Removed', `${item.name} deleted.`, 'INFO');
+            const prev = item.quantity;
+            const next = Math.max(0, prev + amount);
+            if (prev === next) return;
 
-            renderAll();
+            item.quantity = next;
+            
+            if (amount > 0) {
+                createAlert('🟢 Stock Restocked', `Item <b>${item.name}</b> increased (+${amount}). Current Total: ${item.quantity} units.`, 'success');
+            } else {
+                createAlert('🟡 Stock Reduced', `Item <b>${item.name}</b> reduced (${amount}). Remaining: ${item.quantity} units.`, 'warning');
+            }
+
+            if (item.quantity === 0) {
+                createAlert('🔴 Out of Stock Alert', `Item <b>${item.name}</b> is now completely OUT OF STOCK!`, 'danger');
+            } else if (item.quantity <= item.minThreshold) {
+                createAlert('🟠 Low Stock Warning', `Item <b>${item.name}</b> is running low! (${item.quantity} remaining)`, 'warning');
+            }
+
+            refreshApp();
         }
 
-        // Table Search & Filter Logic
-        function filterInventoryTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const status = document.getElementById('statusFilter').value;
-            const rows = document.querySelectorAll('#fullInventoryTableBody tr');
+        function handleStockAction(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('action-item-select').value);
+            const type = document.querySelector('input[name="action_type"]:checked').value;
+            const qty = parseInt(document.getElementById('action-qty').value);
 
-            rows.forEach((row, index) => {
-                const item = inventory[index];
-                if (!item) return;
+            quickAdjust(id, type === 'IN' ? qty : -qty);
+            document.getElementById('stock-action-form').reset();
+        }
 
-                const matchesQuery = item.name.toLowerCase().includes(query) || item.sku.toLowerCase().includes(query) || item.category.toLowerCase().includes(query);
-                
-                let matchesStatus = true;
-                if (status === 'IN_STOCK') matchesStatus = item.stock > item.threshold;
-                else if (status === 'LOW_STOCK') matchesStatus = item.stock > 0 && item.stock <= item.threshold;
-                else if (status === 'OUT_OF_STOCK') matchesStatus = item.stock === 0;
+        function handleAddItem(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-item-name').value;
+            const category = document.getElementById('new-item-cat').value;
+            const quantity = parseInt(document.getElementById('new-item-qty').value);
+            const minThreshold = parseInt(document.getElementById('new-item-min').value);
 
-                if (matchesQuery && matchesStatus) {
-                    row.classList.remove('hidden');
-                } else {
-                    row.classList.add('hidden');
-                }
+            const newItem = { id: Date.now(), name, category, quantity, minThreshold };
+            inventory.push(newItem);
+            
+            createAlert('🟢 New Item Added', `Added <b>${name}</b> into inventory with ${quantity} units.`, 'success');
+            
+            closeModal();
+            refreshApp();
+        }
+
+        function filterInventory() {
+            const query = document.getElementById('search-inventory').value.toLowerCase();
+            const rows = document.querySelectorAll('#inventory-table-body tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
             });
         }
 
-        // Helper string sanitizer
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            
+            document.getElementById('page-title').innerText = tab === 'dashboard' ? 'Dashboard' :
+                                                              tab === 'inventory' ? 'Inventory List' :
+                                                              tab === 'stock-actions' ? 'Stock In / Out' : 'Alerts Log';
         }
+
+        function addNewItemModal() {
+            document.getElementById('add-item-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('add-item-modal').classList.add('hidden');
+            document.getElementById('add-item-form').reset();
+        }
+
+        function refreshApp() {
+            updateMetrics();
+            renderTables();
+        }
+
+        // Initialize App
+        refreshApp();
+        createAlert('🔵 System Ready', 'StockPulse inventory system loaded successfully.', 'success');
     </script>
 </body>
 </html>
-// ฟังก์ชันส่งข้อความเข้า Discord Webhook
-function sendDiscordNotification(message) {
-    const webhookUrl = "นำ_WEBHOOK_URL_ที่ก๊อปปี้ไว้มาวางตรงนี้";
-    
-    fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            content: message
-        })
-    }).catch(err => console.error("Discord Notification Error:", err));
-}
