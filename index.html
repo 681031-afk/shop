@@ -221,29 +221,7 @@
     </div>
 
     <!-- Script Logic -->
-    <script>
-        // CONFIGURATION: Discord Webhook Link
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1567068607991779338/tieO0T0hrmmJeiEGLCEqqyuFvGqNmgYW0TbxJ7ZvkZi2soBQC56PnscZ2pfm";
 
-        // Initial Sample Data
-        let inventory = [
-            { id: 1, name: "Wireless Ergonomic Mouse", category: "Electronics", quantity: 15, minThreshold: 5 },
-            { id: 2, name: "Mechanical Gaming Keyboard", category: "Electronics", quantity: 3, minThreshold: 5 },
-            { id: 3, name: "27-inch 4K Monitor", category: "Displays", quantity: 0, minThreshold: 2 }
-        ];
-
-        let alertLogs = [];
-
-        // Function to dispatch alerts to Discord
-        function sendDiscordNotification(message) {
-            if (!DISCORD_WEBHOOK_URL || DISCORD_WEBHOOK_URL.includes("https://discord.com/api/webhooks/1567068607991779338/tieO0T0hrmmJeiEGLCEqqyuFvGqNmgYW0TbxJ7ZvkZi2soBQC56PnscZ2pfmvGzE2F6T")) return;
-            
-            fetch(DISCORD_WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: message })
-            }).catch(err => console.error("Discord Error:", err));
-        }
 
         function createAlert(title, detail, type) {
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
