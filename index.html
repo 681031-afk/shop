@@ -884,3 +884,15 @@
     </script>
 </body>
 </html>
+// ฟังก์ชันส่งข้อความเข้า Discord Webhook
+function sendDiscordNotification(message) {
+    const webhookUrl = "นำ_WEBHOOK_URL_ที่ก๊อปปี้ไว้มาวางตรงนี้";
+    
+    fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            content: message
+        })
+    }).catch(err => console.error("Discord Notification Error:", err));
+}
